@@ -7,12 +7,15 @@ export 'package:faker/faker.dart';
 typedef FakerCallback(Faker faker);
 
 /// Used to seed nested objects.
-typedef SeederCallback<T>(
-    T created, seed(Pattern path, SeederConfiguration configuration));
+typedef SeederCallback<T>(T created,
+    seed(Pattern path, SeederConfiguration configuration, {bool verbose}));
 
 /// Seeds the given service in development.
 AngelConfigurer seed<T>(
-    Pattern servicePath, SeederConfiguration<T> configuration) {
+  Pattern servicePath,
+  SeederConfiguration<T> configuration, {
+  bool verbose: false,
+}) {
   return (Angel app) async {
     if (app.isProduction && configuration.runInProduction != true) return;
 
@@ -43,7 +46,7 @@ AngelConfigurer seed<T>(
       });
     }
 
-    _buildSeeder(Service service) {
+    _buildSeeder(Service service, {bool verbose}) {
       return (SeederConfiguration configuration) async {
         if (configuration.delete == true) await service.remove(null);
 
@@ -64,8 +67,10 @@ AngelConfigurer seed<T>(
 
             if (configuration.callback != null) {
               await configuration.callback(result,
-                  (Pattern path, SeederConfiguration configuration) {
-                return _buildSeeder(app.service(path))(configuration);
+                  (Pattern path, SeederConfiguration configuration,
+                      {bool verbose}) {
+                return _buildSeeder(app.service(path))(configuration,
+                    verbose: verbose == true);
               });
             }
           }
@@ -81,11 +86,12 @@ AngelConfigurer seed<T>(
                 'Configuration for service \'$servicePath\' must define at least one template.');
         }
 
-        print('Created $count object(s) in service \'$servicePath\'.');
+        if (verbose == true)
+          print('Created $count object(s) in service \'$servicePath\'.');
       };
     }
 
-    await _buildSeeder(service)(configuration);
+    await _buildSeeder(service, verbose: verbose == true)(configuration);
   };
 }
 

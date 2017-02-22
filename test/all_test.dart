@@ -1,4 +1,5 @@
 import 'package:angel_framework/angel_framework.dart';
+import 'package:angel_framework/common.dart';
 import 'package:angel_seeder/angel_seeder.dart';
 import 'package:test/test.dart';
 
@@ -33,18 +34,18 @@ class TodoService extends Service {
       todos.add(data..id = todos.length);
       return data;
     } else if (data is Map) {
-      todos.add(new Todo.fromJson(data)..id = todos.length);
+      todos.add(new Todo.fromJson(data)..id = todos.length.toString());
       return data;
     } else
       throw new AngelHttpException.badRequest();
   }
 }
 
-class Todo extends MemoryModel {
+class Todo extends Model {
   final String text;
   final bool completed;
 
-  Todo({int id, this.text, this.completed: false}) {
+  Todo({String id, this.text, this.completed: false}) {
     this.id = id;
   }
 
