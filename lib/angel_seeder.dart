@@ -69,8 +69,8 @@ AngelConfigurer seed<T>(
               await configuration.callback(result,
                   (Pattern path, SeederConfiguration configuration,
                       {bool verbose}) {
-                return _buildSeeder(app.service(path))(configuration,
-                    verbose: verbose == true);
+                return _buildSeeder(app.service(path),
+                    verbose: verbose == true)(configuration);
               });
             }
           }
