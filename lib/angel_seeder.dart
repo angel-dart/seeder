@@ -60,6 +60,8 @@ AngelConfigurer seed<T>(
 
             if (data is Map) {
               data = _buildTemplate(data);
+            } else if (data is Faker) {
+              data = template(faker);
             }
 
             var params = {}..addAll(configuration.params ?? {});
